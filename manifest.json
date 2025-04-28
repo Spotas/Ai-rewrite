@@ -1,0 +1,30 @@
+{
+    "manifest_version": 3,
+    "name": "AI Text Rewriter (Gemini)",
+    "version": "1.0",
+    "description": "Rewrites selected text in input fields using Gemini AI.",
+    "permissions": [
+      "storage",      
+      "contextMenus", 
+      "scripting",    
+      "activeTab"     
+    ],
+    "host_permissions": [
+      "<all_urls>"    
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "options_page": "options.html",
+    "action": {
+      "default_title": "AI Text Rewriter Settings",
+      "default_popup": "options.html" 
+    },
+    "icons": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  }
+  
+  
