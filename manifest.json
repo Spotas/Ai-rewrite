@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "AI Text Rewriter (Gemini)",
-    "version": "1.0",
+    "version": "1.2",
     "description": "Rewrites selected text in input fields using Gemini AI.",
     "permissions": [
       "storage",      

@@ -1,5 +1,5 @@
-// Gemini API Endpoint (using v1beta, gemini-2.0-flash-lite model)
-const GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent";
+// Gemini API Endpoint (using v1beta, gemini-2.5-flash-preview-04-17 model)
+const GEMINI_API_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-04-17:generateContent";
 
 // --- Context Menu Setup ---
 
@@ -129,7 +129,7 @@ async function callGeminiApi(apiKey, text, mode) {
 
     switch (mode) {
         case 'humanize':
-            prompt = `Rewrite the following text to sound more natural and human-like, suitable for casual conversation. Avoid jargon and overly formal structures. Use the simplest English possible ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
+            prompt = `Rewrite the following text like a human. Avoid jargon and overly formal structures. Include some common grammatical mistakes or typos. Use the simplest English possible ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
             break;
         case 'grammar':
             prompt = `Correct only the grammar and spelling mistakes in the following text. Keep the original meaning and tone as closely as possible. ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nCorrected text:`;
@@ -141,7 +141,7 @@ async function callGeminiApi(apiKey, text, mode) {
             prompt = `Rewrite the following text in a polite and courteous tone. Soften any direct or potentially harsh language. ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
             break;
         case 'cheeky':
-            prompt = `Rewrite the following text in a cheeky sarcastic tone. Include some common grammatical mistakes or typos (like your/you're, its/it's, there/their/they're). ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
+            prompt = `Rewrite the following text in a cheeky sarcastic tone. Include some common grammatical mistakes or typos. ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
             break;
         case 'newby':
             prompt = `Rewrite the following text as if someone new to the subject wrote it. Make it sound a bit simplistic, slightly awkward, or perhaps overly enthusiastic, like a beginner trying to explain something. Make a lot of grammatical mistakes. ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
@@ -163,7 +163,7 @@ async function callGeminiApi(apiKey, text, mode) {
         }],
         generationConfig: {
             maxOutputTokens: 4096, // Allow slightly longer output for composer maybe
-            temperature: 1.5, // Default is usually fine
+            temperature: 2.0, // Default is usually fine
             // Consider stop sequences if multi-paragraph output is undesirable for certain modes
         }
         // Safety settings remain default unless specific issues arise
