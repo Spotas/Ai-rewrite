@@ -37,12 +37,12 @@ chrome.runtime.onInstalled.addListener(() => {
                 contexts: ["editable"]
             });
         }
-         console.log("Context menus created.");
+        console.log("Context menus created.");
     }); // End removeAll callback
 
 
-     // Check for API key on install/update and prompt if missing
-     chrome.storage.sync.get(['geminiApiKey'], (result) => {
+    // Check for API key on install/update and prompt if missing
+    chrome.storage.sync.get(['geminiApiKey'], (result) => {
         if (!result.geminiApiKey) {
             console.log("Gemini API Key not found. Opening options page.");
             // Optionally open options page automatically if key is missing
@@ -63,11 +63,11 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
     // --- CHECK for restricted URLs ---
     if (!tab || !tab.url || !tab.url.match(/^https?:\/\//)) {
-         if (tab && tab.url) {
+        if (tab && tab.url) {
             console.warn(`AI Rewriter cannot run on this URL: ${tab.url}. Script injection is not allowed or applicable.`);
-         } else {
-             console.warn("AI Rewriter cannot determine the tab URL or tab is invalid.");
-         }
+        } else {
+            console.warn("AI Rewriter cannot determine the tab URL or tab is invalid.");
+        }
         return;
     }
     // --- END CHECK ---
@@ -76,12 +76,12 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
     // Ensure we have selected text (even for composer, it's the instruction)
     if (!info.selectionText || info.selectionText.trim() === "") {
-         const message = modeKey === 'composer'
-             ? "Please select a brief instruction first (e.g., 'write email asking for update')."
-             : "No text selected for rewrite.";
-         console.warn(message);
-         notifyUser(tab.id, `Error: ${message}`, true); // Notify user about missing selection/instruction
-         return;
+        const message = modeKey === 'composer'
+            ? "Please select a brief instruction first (e.g., 'write email asking for update')."
+            : "No text selected for rewrite.";
+        console.warn(message);
+        notifyUser(tab.id, `Error: ${message}`, true); // Notify user about missing selection/instruction
+        return;
     }
 
     const selectedText = info.selectionText; // This is the instruction for 'composer' mode
@@ -106,16 +106,16 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
             const resultText = await callGeminiApi(apiKey, selectedText, modeKey);
             if (resultText) {
-                 console.log(`Result text received: '${resultText.substring(0, 50)}...'`);
-                 // Inject the result back into the page
+                console.log(`Result text received: '${resultText.substring(0, 50)}...'`);
+                // Inject the result back into the page
                 injectTextIntoPage(tab.id, info.frameId, resultText); // Use 'resultText' which covers rewrite/compose
             } else {
                 console.error("Received empty response from Gemini API.");
-                 notifyUser(tab.id, "Error: Received no text from AI. Check API key or try again.", true);
+                notifyUser(tab.id, "Error: Received no text from AI. Check API key or try again.", true);
             }
         } catch (error) {
             console.error(`Error calling Gemini API for mode ${modeKey}:`, error);
-             notifyUser(tab.id, `Error: API call failed. ${error.message}. Check console & API Key.`, true);
+            notifyUser(tab.id, `Error: API call failed. ${error.message}. Check console & API Key.`, true);
         }
     });
 });
@@ -144,7 +144,7 @@ async function callGeminiApi(apiKey, text, mode) {
             prompt = `Rewrite the following text in a cheeky sarcastic tone. Include some common grammatical mistakes or typos (like your/you're, its/it's, there/their/they're). ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
             break;
         case 'newby':
-             prompt = `Rewrite the following text as if someone new to the subject wrote it. Make it sound a bit simplistic, slightly awkward, or perhaps overly enthusiastic, like a beginner trying to explain something. Make a lot of grammatical mistakes. ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
+            prompt = `Rewrite the following text as if someone new to the subject wrote it. Make it sound a bit simplistic, slightly awkward, or perhaps overly enthusiastic, like a beginner trying to explain something. Make a lot of grammatical mistakes. ${baseInstruction}\n\nOriginal text:\n"${text}"\n\nRewritten text:`;
             break;
         // --- NEW COMPOSER MODE ---
         case 'composer':
@@ -162,11 +162,11 @@ async function callGeminiApi(apiKey, text, mode) {
             }]
         }],
         generationConfig: {
-           maxOutputTokens: 4096, // Allow slightly longer output for composer maybe
-           // temperature: 0.7, // Default is usually fine
-           // Consider stop sequences if multi-paragraph output is undesirable for certain modes
+            maxOutputTokens: 4096, // Allow slightly longer output for composer maybe
+            temperature: 1.5, // Default is usually fine
+            // Consider stop sequences if multi-paragraph output is undesirable for certain modes
         }
-         // Safety settings remain default unless specific issues arise
+        // Safety settings remain default unless specific issues arise
     };
 
     console.log("Sending request to Gemini...");
@@ -205,7 +205,7 @@ async function callGeminiApi(apiKey, text, mode) {
                 resultText = resultText.substring(1, resultText.length - 1).trim();
             }
             // 2. Remove potential markdown list formatting
-            resultText = resultText.replace(/^[\*\-\+] +/,'');
+            resultText = resultText.replace(/^[\*\-\+] +/, '');
             // 3. Remove common preamble phrases if the prompt instructions weren't perfectly followed
             const preambles = [
                 /^Rewritten text: ?/i,
@@ -225,8 +225,8 @@ async function callGeminiApi(apiKey, text, mode) {
             return resultText.trim(); // Final trim
 
         } else if (data.promptFeedback && data.promptFeedback.blockReason) {
-             console.error("Content blocked by Gemini:", data.promptFeedback.blockReason, "Safety Ratings:", data.promptFeedback.safetyRatings);
-             throw new Error(`Content blocked by API: ${data.promptFeedback.blockReason}. Check instruction/text or safety settings.`);
+            console.error("Content blocked by Gemini:", data.promptFeedback.blockReason, "Safety Ratings:", data.promptFeedback.safetyRatings);
+            throw new Error(`Content blocked by API: ${data.promptFeedback.blockReason}. Check instruction/text or safety settings.`);
         }
         else {
             console.error("Unexpected response structure or empty text:", data);
@@ -248,17 +248,17 @@ function injectTextIntoPage(tabId, frameId, textToInject) {
         func: replaceSelectedText,
         args: [textToInject],
     }, (injectionResults) => {
-         if (chrome.runtime.lastError) {
+        if (chrome.runtime.lastError) {
             console.error("Script injection failed:", chrome.runtime.lastError.message);
-             notifyUser(tabId, "Error: Could not modify the text field. " + chrome.runtime.lastError.message, true);
-         } else if (injectionResults && injectionResults[0] && injectionResults[0].result === false) {
-             console.warn("Script executed, but reported no text was replaced (maybe focus lost or element changed?).");
-             notifyUser(tabId, "Warning: Couldn't replace text. Was the input field still focused?", false);
-         } else if (injectionResults && injectionResults[0] && injectionResults[0].result === true){
+            notifyUser(tabId, "Error: Could not modify the text field. " + chrome.runtime.lastError.message, true);
+        } else if (injectionResults && injectionResults[0] && injectionResults[0].result === false) {
+            console.warn("Script executed, but reported no text was replaced (maybe focus lost or element changed?).");
+            notifyUser(tabId, "Warning: Couldn't replace text. Was the input field still focused?", false);
+        } else if (injectionResults && injectionResults[0] && injectionResults[0].result === true) {
             console.log("Script executed successfully, text replaced.");
-         } else {
-             console.log("Script injection completed, but replacement status unknown.");
-         }
+        } else {
+            console.log("Script injection completed, but replacement status unknown.");
+        }
     });
 }
 
@@ -271,51 +271,51 @@ function replaceSelectedText(replacementText) {
         try {
             const start = activeElement.selectionStart;
             const end = activeElement.selectionEnd;
-             if (typeof start === 'number' && typeof end === 'number' && start <= end) {
-                 const currentValue = activeElement.value !== undefined ? activeElement.value : activeElement.textContent;
-                 const newValue = currentValue.slice(0, start) + replacementText + currentValue.slice(end);
-                 const event = new Event('input', { bubbles: true, cancelable: true });
+            if (typeof start === 'number' && typeof end === 'number' && start <= end) {
+                const currentValue = activeElement.value !== undefined ? activeElement.value : activeElement.textContent;
+                const newValue = currentValue.slice(0, start) + replacementText + currentValue.slice(end);
+                const event = new Event('input', { bubbles: true, cancelable: true });
 
-                 if (activeElement.isContentEditable) {
+                if (activeElement.isContentEditable) {
                     // Using execCommand is often more reliable for contentEditable
                     document.execCommand('insertText', false, replacementText);
                     success = true; // Assume success unless execCommand specifically fails (though it rarely throws errors)
-                 } else {
+                } else {
                     activeElement.value = newValue;
                     success = true;
-                 }
+                }
 
-                 activeElement.focus();
-                 // Adjust cursor position *after* potentially complex contentEditable update or value set
-                 activeElement.selectionStart = activeElement.selectionEnd = start + replacementText.length;
+                activeElement.focus();
+                // Adjust cursor position *after* potentially complex contentEditable update or value set
+                activeElement.selectionStart = activeElement.selectionEnd = start + replacementText.length;
 
-                 activeElement.dispatchEvent(event);
-                 console.log("Replaced text using direct value/selection manipulation or execCommand.");
+                activeElement.dispatchEvent(event);
+                console.log("Replaced text using direct value/selection manipulation or execCommand.");
 
-             } else {
-                 console.log("Selection properties not available or invalid, trying execCommand as fallback.");
-                 if (document.execCommand('insertText', false, replacementText)) {
-                     console.log("Replaced text using execCommand('insertText').");
-                     success = true;
-                 } else {
-                     console.error("Direct replacement failed and execCommand('insertText') also failed.");
-                 }
-             }
+            } else {
+                console.log("Selection properties not available or invalid, trying execCommand as fallback.");
+                if (document.execCommand('insertText', false, replacementText)) {
+                    console.log("Replaced text using execCommand('insertText').");
+                    success = true;
+                } else {
+                    console.error("Direct replacement failed and execCommand('insertText') also failed.");
+                }
+            }
 
         } catch (e) {
-             console.error("Error during text replacement:", e);
-             // Final attempt with execCommand if an error occurred
-             try {
+            console.error("Error during text replacement:", e);
+            // Final attempt with execCommand if an error occurred
+            try {
                 if (document.execCommand('insertText', false, replacementText)) {
                     console.log("Replaced text using execCommand('insertText') after catching error.");
                     success = true;
-                 }
-             } catch (e2) {
-                  console.error("execCommand failed again after catching error:", e2);
-             }
+                }
+            } catch (e2) {
+                console.error("execCommand failed again after catching error:", e2);
+            }
         }
     } else {
-         console.warn("No active editable element found or element type is not supported.");
+        console.warn("No active editable element found or element type is not supported.");
     }
     return success;
 }
@@ -324,7 +324,7 @@ function replaceSelectedText(replacementText) {
 // --- Helper to Notify User ---
 function notifyUser(tabId, message, isError = false, duration = 4000) {
     console.log(`Notifying user in tab ${tabId}: ${message}`);
-     chrome.scripting.executeScript({
+    chrome.scripting.executeScript({
         target: { tabId: tabId },
         func: (msg, errorFlag, durationMs) => {
             let notifyDiv = document.getElementById('--ai-rewriter-notifier');
@@ -340,20 +340,20 @@ function notifyUser(tabId, message, isError = false, duration = 4000) {
                     transition: 'opacity 0.3s ease-in-out'
                 });
                 document.body.appendChild(notifyDiv);
-                 setTimeout(() => notifyDiv.style.opacity = '1', 10);
+                setTimeout(() => notifyDiv.style.opacity = '1', 10);
             } else {
-                 notifyDiv.style.backgroundColor = errorFlag ? 'rgba(211, 47, 47, 0.9)' : 'rgba(46, 125, 50, 0.9)';
-                 notifyDiv.style.opacity = '1';
-                 if (notifyDiv.dataset.timeoutId) {
-                     clearTimeout(parseInt(notifyDiv.dataset.timeoutId));
-                 }
+                notifyDiv.style.backgroundColor = errorFlag ? 'rgba(211, 47, 47, 0.9)' : 'rgba(46, 125, 50, 0.9)';
+                notifyDiv.style.opacity = '1';
+                if (notifyDiv.dataset.timeoutId) {
+                    clearTimeout(parseInt(notifyDiv.dataset.timeoutId));
+                }
             }
             notifyDiv.textContent = msg;
             const timeoutId = setTimeout(() => {
                 notifyDiv.style.opacity = '0';
-                 setTimeout(() => { if (document.getElementById('--ai-rewriter-notifier') === notifyDiv) { notifyDiv.remove(); } }, 300);
+                setTimeout(() => { if (document.getElementById('--ai-rewriter-notifier') === notifyDiv) { notifyDiv.remove(); } }, 300);
             }, durationMs);
-             notifyDiv.dataset.timeoutId = timeoutId.toString();
+            notifyDiv.dataset.timeoutId = timeoutId.toString();
         },
         args: [message, isError, duration],
     }).catch(err => { console.error("Failed to inject notification script:", err) });
