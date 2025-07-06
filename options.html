@@ -15,10 +15,23 @@
             --input-background-color: #ffffff;
             --success-color: #28a745;
             --error-color: #dc3545;
+            --warning-color: #ffc107;
             --link-color: #0056b3;
             --card-background: #ffffff;
             --card-shadow: 0 2px 4px rgba(0,0,0,0.1);
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        [data-theme="dark"] {
+            --background-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --primary-color: #4dabf7;
+            --primary-hover-color: #339af0;
+            --input-border-color: #495057;
+            --input-focus-border-color: #4dabf7;
+            --input-background-color: #2d3238;
+            --card-background: #2d3238;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         body {
@@ -27,28 +40,85 @@
             color: var(--text-color);
             margin: 0;
             padding: 20px;
-            min-width: 350px; /* Slightly wider */
-            display: flex;
-            flex-direction: column;
-            align-items: center; /* Center content */
+            min-width: 500px;
+            transition: all 0.3s ease;
         }
 
         .container {
             background-color: var(--card-background);
-            padding: 25px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: var(--card-shadow);
-            width: 100%;
-            max-width: 400px; /* Limit max width */
+            max-width: 800px;
+            margin: 0 auto;
             box-sizing: border-box;
         }
 
-        h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
+        .header {
             text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            margin: 0;
             color: var(--primary-color);
-            font-weight: 500;
+            font-weight: 600;
+            font-size: 2em;
+        }
+
+        .header .subtitle {
+            color: #6c757d;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--input-border-color);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--text-color);
+            font-size: 1em;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab:hover {
+            background-color: rgba(0,123,255,0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            align-items: end;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
         }
 
         label {
@@ -58,10 +128,9 @@
             font-size: 0.95em;
         }
 
-        input[type="password"] {
+        input, select, textarea {
             width: 100%;
             padding: 10px 12px;
-            margin-bottom: 18px;
             box-sizing: border-box;
             border: 1px solid var(--input-border-color);
             border-radius: 4px;
@@ -71,22 +140,30 @@
             transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
         }
 
-        input[type="password"]:focus {
+        input:focus, select:focus, textarea:focus {
             border-color: var(--input-focus-border-color);
             outline: 0;
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
 
-         /* Style for placeholder text */
-        input[type="password"]::placeholder {
-            color: #6c757d; /* Bootstrap secondary text color */
-            opacity: 1; /* Firefox */
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
         }
 
         button {
-            display: block; /* Make button full width */
-            width: 100%;
-            padding: 10px 15px;
+            padding: 10px 20px;
             cursor: pointer;
             background-color: var(--primary-color);
             color: white;
@@ -101,19 +178,39 @@
             background-color: var(--primary-hover-color);
         }
 
-        button:active {
-             background-color: #004085; /* Darker shade */
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        button.secondary {
+            background-color: #6c757d;
+        }
+
+        button.danger {
+            background-color: var(--error-color);
+        }
+
+        button.small {
+            padding: 5px 10px;
+            font-size: 0.9em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
 
         #status {
             margin-top: 18px;
             font-weight: 500;
             text-align: center;
-            min-height: 1.2em; /* Prevent layout shift */
+            min-height: 1.2em;
             transition: color 0.3s ease;
         }
 
-        #status.success { /* Added class for success */
+        #status.success {
             color: var(--success-color);
         }
 
@@ -121,53 +218,255 @@
             color: var(--error-color);
         }
 
-        p.help-text { /* Class for help text */
-            margin-top: 20px;
-            font-size: 0.85em;
-            color: #6c757d;
-            text-align: center;
+        #status.warning {
+            color: var(--warning-color);
         }
 
-        p.help-text a {
+        .help-text {
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        .help-text a {
             color: var(--link-color);
             text-decoration: none;
         }
 
-        p.help-text a:hover {
+        .help-text a:hover {
             text-decoration: underline;
         }
 
-        /* Footer Styles */
-        .footer {
-            margin-top: 30px; /* Increased margin */
-            font-size: 0.8em; /* Smaller font */
-            color: #6c757d; /* Muted color */
-            text-align: center;
-            width: 100%;
+        .custom-mode {
+            background-color: rgba(0,123,255,0.05);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border: 1px solid var(--input-border-color);
         }
 
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background-color: rgba(0,123,255,0.05);
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .mode-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mode-item {
+            background-color: rgba(0,123,255,0.05);
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: 1px solid var(--input-border-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 0.8em;
+            color: #6c757d;
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-row .form-group {
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Wrapped content in a container for better styling -->
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+    
     <div class="container">
-        <h2>AI Text Rewriter Settings</h2>
+        <div class="header">
+            <h1>🤖 AI Text Rewriter</h1>
+            <div class="subtitle">Powered by Google Gemini</div>
+        </div>
 
-        <label for="apiKey">Gemini API Key:</label>
-        <input type="password" id="apiKey" name="apiKey" placeholder="Paste your Google AI Studio API Key here">
+        <div class="tabs">
+            <button class="tab active" data-tab="general">⚙️ General</button>
+            <button class="tab" data-tab="modes">🎭 Modes</button>
+            <button class="tab" data-tab="custom">🎨 Custom</button>
+            <button class="tab" data-tab="stats">📊 Stats</button>
+            <button class="tab" data-tab="advanced">🔧 Advanced</button>
+        </div>
 
-        <button id="save">Save Key</button>
+        <!-- General Settings Tab -->
+        <div id="general" class="tab-content active">
+            <div class="form-group">
+                <label for="apiKey">🔑 Gemini API Key *</label>
+                <input type="password" id="apiKey" name="apiKey" placeholder="Paste your Google AI Studio API Key here">
+                <div class="help-text">
+                    Get your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="selectedModel">🧠 AI Model</label>
+                    <select id="selectedModel">
+                        <option value="gemini-2.5-flash">Gemini 2.5 Flash (Best Balance - Recommended)</option>
+                        <option value="gemini-2.5-flash-lite-preview">Gemini 2.5 Flash Lite (Cost Efficient)</option>
+                        <option value="gemini-2.0-flash">Gemini 2.0 Flash (Fast & Modern)</option>
+                        <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite (Ultra Fast)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="maxTextLength">📏 Max Text Length</label>
+                    <input type="number" id="maxTextLength" min="100" max="50000" step="100" value="8000">
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="enableUndo" checked>
+                <label for="enableUndo">↶ Enable Undo Functionality</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="enableUsageTracking" checked>
+                <label for="enableUsageTracking">📊 Track Usage Statistics</label>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="enableKeyboardShortcuts">
+                <label for="enableKeyboardShortcuts">⌨️ Enable Keyboard Shortcuts</label>
+            </div>
+
+            <div class="button-group">
+                <button id="saveGeneral">💾 Save Settings</button>
+                <button id="testConnection" class="secondary">🧪 Test API Key</button>
+            </div>
+        </div>
+
+        <!-- Modes Tab -->
+        <div id="modes" class="tab-content">
+            <p>Select which rewrite modes to show in the context menu:</p>
+            <div id="modesList" class="mode-list"></div>
+            <div class="button-group">
+                <button id="saveModes">💾 Save Mode Settings</button>
+                <button id="resetModes" class="secondary">↻ Reset to Default</button>
+            </div>
+        </div>
+
+        <!-- Custom Modes Tab -->
+        <div id="custom" class="tab-content">
+            <p>Create your own custom rewrite modes:</p>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="customModeName">Mode Name</label>
+                    <input type="text" id="customModeName" placeholder="e.g., Formal Academic">
+                </div>
+                <button id="addCustomMode" class="small">➕ Add Mode</button>
+            </div>
+
+            <div class="form-group">
+                <label for="customModePrompt">Prompt Instructions</label>
+                <textarea id="customModePrompt" placeholder="Describe how the text should be rewritten..."></textarea>
+                <div class="help-text">
+                    Example: "Rewrite this text in an academic style with proper citations and formal language."
+                </div>
+            </div>
+
+            <div id="customModesList"></div>
+        </div>
+
+        <!-- Stats Tab -->
+        <div id="stats" class="tab-content">
+            <h3>📊 Usage Statistics</h3>
+            <div id="statsContent">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalRewrites">0</div>
+                        <div>Total Rewrites</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalChars">0</div>
+                        <div>Characters Processed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="favoriteMode">-</div>
+                        <div>Most Used Mode</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="lastUsed">-</div>
+                        <div>Last Used</div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-group">
+                <button id="refreshStats" class="secondary">🔄 Refresh</button>
+                <button id="clearStats" class="danger">🗑️ Clear Stats</button>
+            </div>
+        </div>
+
+        <!-- Advanced Tab -->
+        <div id="advanced" class="tab-content">
+            <div class="form-group">
+                <label>🌙 Theme</label>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="darkMode">
+                    <label for="darkMode">Dark Mode</label>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button id="exportSettings" class="secondary">📤 Export Settings</button>
+                <button id="importSettings" class="secondary">📥 Import Settings</button>
+                <button id="resetAllSettings" class="danger">🔄 Reset All Settings</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display: none;">
+        </div>
 
         <div id="status"></div>
-
-        <p class="help-text"> <!-- Added class -->
-            Get your API key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Google AI Studio</a>.
-        </p>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
-        Crafted with 💙 by Supratim
+        Crafted with 💙 by Supratim | v2.0
     </div>
 
     <script src="options.js"></script>
