@@ -16,9 +16,16 @@
     "background": {
       "service_worker": "background.js"
     },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"],
+        "run_at": "document_start"
+      }
+    ],
     "options_page": "options.html",
     "action": {
-      "default_title": "AI Text Rewriter Pro Settings",
+      "default_title": "AI Text Rewriter Settings",
       "default_popup": "options.html" 
     },
     "icons": {

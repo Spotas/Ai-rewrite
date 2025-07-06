@@ -396,6 +396,8 @@ async function checkApiKeyStatus() {
         chrome.storage.sync.get(['geminiApiKey'], (result) => {
             if (!result.geminiApiKey) {
                 console.log("Gemini API Key not found. User needs to configure.");
+                // Show notification to configure API key
+                showApiKeyNotification();
             } else {
                 console.log("Gemini API Key found.");
             }
@@ -403,6 +405,51 @@ async function checkApiKeyStatus() {
         });
     });
 }
+
+// Show notification when API key is not configured
+function showApiKeyNotification() {
+    chrome.notifications.create({
+        type: 'basic',
+        iconUrl: 'icons/icon48.png',
+        title: 'AI Text Rewriter - Setup Required',
+        message: 'Please configure your Gemini API key in the extension settings to start rewriting text.',
+        buttons: [
+            { title: 'Open Settings' },
+            { title: 'Dismiss' }
+        ],
+        priority: 1
+    }, (notificationId) => {
+        // Store notification ID for handling clicks
+        chrome.storage.local.set({ 'setupNotificationId': notificationId });
+    });
+}
+
+// Handle notification button clicks
+chrome.notifications.onButtonClicked.addListener((notificationId, buttonIndex) => {
+    chrome.storage.local.get(['setupNotificationId'], (result) => {
+        if (result.setupNotificationId === notificationId) {
+            if (buttonIndex === 0) {
+                // Open Settings button clicked
+                chrome.runtime.openOptionsPage();
+            }
+            // Clear notification
+            chrome.notifications.clear(notificationId);
+            chrome.storage.local.remove('setupNotificationId');
+        }
+    });
+});
+
+// Handle notification clicks (entire notification)
+chrome.notifications.onClicked.addListener((notificationId) => {
+    chrome.storage.local.get(['setupNotificationId'], (result) => {
+        if (result.setupNotificationId === notificationId) {
+            // Open settings when notification is clicked
+            chrome.runtime.openOptionsPage();
+            chrome.notifications.clear(notificationId);
+            chrome.storage.local.remove('setupNotificationId');
+        }
+    });
+});
 
 // === ENHANCED CONTEXT MENU HANDLER ===
 
@@ -474,23 +521,35 @@ function getUserFriendlyError(error) {
     
     const errorMsg = error.message || error.toString();
     
-    if (errorMsg.includes('API key')) {
-        return "Please configure your Gemini API key in settings";
+    if (errorMsg.includes('API key') || errorMsg.includes('invalid key') || errorMsg.includes('authentication')) {
+        return "API key error - Please check your Gemini API key in settings";
     }
-    if (errorMsg.includes('quota') || errorMsg.includes('rate limit')) {
-        return "API rate limit reached. Please try again later";
+    if (errorMsg.includes('quota') || errorMsg.includes('rate limit') || errorMsg.includes('429')) {
+        return "API rate limit reached - Please try again in a few minutes";
     }
-    if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
-        return "Network error. Please check your connection";
+    if (errorMsg.includes('network') || errorMsg.includes('fetch') || errorMsg.includes('NetworkError')) {
+        return "Network error - Please check your internet connection";
     }
-    if (errorMsg.includes('timeout')) {
-        return "Request timed out. Please try again";
+    if (errorMsg.includes('timeout') || errorMsg.includes('AbortError')) {
+        return "Request timed out - Please try again";
     }
-    if (errorMsg.includes('blocked')) {
-        return "Request blocked. Check your content filters";
+    if (errorMsg.includes('blocked') || errorMsg.includes('safety') || errorMsg.includes('SAFETY')) {
+        return "Content blocked by safety filters - Try rephrasing your text";
+    }
+    if (errorMsg.includes('400')) {
+        return "Invalid request - Please check your text and try again";
+    }
+    if (errorMsg.includes('401') || errorMsg.includes('403')) {
+        return "API key invalid or expired - Please update your API key in settings";
+    }
+    if (errorMsg.includes('404')) {
+        return "API endpoint not found - The selected model may not be available";
+    }
+    if (errorMsg.includes('500') || errorMsg.includes('502') || errorMsg.includes('503')) {
+        return "Server error - Please try again later";
     }
     
-    return "Something went wrong. Please try again";
+    return "Something went wrong - Please try again";
 }
 
 // Helper function to track usage statistics
@@ -656,6 +715,14 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
 async function performRewrite(tab, info, modeInfo, settings) {
     try {
+        // Validate API key first
+        if (!settings.geminiApiKey || settings.geminiApiKey.trim() === '') {
+            notifyUser(tab.id, "❌ No API key configured - Click to open settings", true, 6000);
+            // Show setup notification
+            showApiKeyNotification();
+            return;
+        }
+
         // Show progress notification
         const modeName = modeInfo.type === 'builtin' 
             ? BUILT_IN_MODES[modeInfo.key]?.name || modeInfo.key
@@ -692,12 +759,29 @@ async function performRewrite(tab, info, modeInfo, settings) {
         console.error(`Context menu rewrite failed:`, error);
         const errorMsg = getUserFriendlyError(error);
         notifyUser(tab.id, `❌ ${errorMsg}`, true);
+        
+        // Show additional help for common errors
+        if (error.message && (error.message.includes('API key') || error.message.includes('401') || error.message.includes('403'))) {
+            setTimeout(() => {
+                showApiKeyNotification();
+            }, 2000);
+        }
     }
 }
 
 // === ENHANCED API FUNCTIONS ===
 
 async function callGeminiApiWithRetry(apiKey, text, modeInfo, settings) {
+    // Validate API key
+    if (!apiKey || apiKey.trim() === '') {
+        throw new Error('API key not configured - Please add your Gemini API key in settings');
+    }
+    
+    // Basic API key format validation
+    if (!apiKey.startsWith('AIza') || apiKey.length < 35) {
+        throw new Error('Invalid API key format - Please check your Gemini API key in settings');
+    }
+    
     let lastError;
     
     for (let attempt = 1; attempt <= CONFIG.MAX_RETRIES; attempt++) {
@@ -716,7 +800,8 @@ async function callGeminiApiWithRetry(apiKey, text, modeInfo, settings) {
             
             // Don't retry on certain errors
             if (error.message.includes('401') || error.message.includes('403') || 
-                error.message.includes('API key') || attempt === CONFIG.MAX_RETRIES) {
+                error.message.includes('API key') || error.message.includes('authentication') ||
+                error.message.includes('invalid key') || attempt === CONFIG.MAX_RETRIES) {
                 throw error;
             }
             
@@ -1073,9 +1158,13 @@ function replaceSelectedTextEnhanced(replacementText) {
 // === ENHANCED NOTIFICATION SYSTEM ===
 function notifyUser(tabId, message, isError = false, duration = 4000) {
     console.log(`Notifying user in tab ${tabId}: ${message}`);
+    
+    // Check if message contains settings-related content
+    const isSettingsMessage = message.includes('API key') || message.includes('settings');
+    
     chrome.scripting.executeScript({
         target: { tabId: tabId },
-        func: (msg, errorFlag, durationMs) => {
+        func: (msg, errorFlag, durationMs, isSettings) => {
             let notifyDiv = document.getElementById('--ai-rewriter-notifier');
             if (!notifyDiv) {
                 notifyDiv = document.createElement('div');
@@ -1098,8 +1187,19 @@ function notifyUser(tabId, message, isError = false, duration = 4000) {
                     transform: 'translateX(100%)',
                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                     maxWidth: '350px',
-                    wordWrap: 'break-word'
+                    wordWrap: 'break-word',
+                    cursor: isSettings ? 'pointer' : 'default'
                 });
+                
+                // Add click handler for settings messages
+                if (isSettings) {
+                    notifyDiv.addEventListener('click', () => {
+                        // Create a custom event to communicate with the extension
+                        window.postMessage({ type: 'AI_REWRITER_OPEN_SETTINGS' }, '*');
+                    });
+                    notifyDiv.title = 'Click to open extension settings';
+                }
+                
                 document.body.appendChild(notifyDiv);
                 
                 // Trigger animation
@@ -1112,6 +1212,18 @@ function notifyUser(tabId, message, isError = false, duration = 4000) {
                 notifyDiv.style.border = errorFlag ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(255,255,255,0.2)';
                 notifyDiv.style.opacity = '1';
                 notifyDiv.style.transform = 'translateX(0)';
+                notifyDiv.style.cursor = isSettings ? 'pointer' : 'default';
+                
+                // Update click handler
+                if (isSettings) {
+                    notifyDiv.onclick = () => {
+                        window.postMessage({ type: 'AI_REWRITER_OPEN_SETTINGS' }, '*');
+                    };
+                    notifyDiv.title = 'Click to open extension settings';
+                } else {
+                    notifyDiv.onclick = null;
+                    notifyDiv.title = '';
+                }
                 
                 if (notifyDiv.dataset.timeoutId) {
                     clearTimeout(parseInt(notifyDiv.dataset.timeoutId));
@@ -1123,20 +1235,27 @@ function notifyUser(tabId, message, isError = false, duration = 4000) {
             const timeoutId = setTimeout(() => {
                 notifyDiv.style.opacity = '0';
                 notifyDiv.style.transform = 'translateX(100%)';
-                setTimeout(() => { 
-                    if (document.getElementById('--ai-rewriter-notifier') === notifyDiv) { 
-                        notifyDiv.remove(); 
-                    } 
+                setTimeout(() => {
+                    if (notifyDiv.parentNode) {
+                        notifyDiv.parentNode.removeChild(notifyDiv);
+                    }
                 }, 300);
             }, durationMs);
             
             notifyDiv.dataset.timeoutId = timeoutId.toString();
         },
-        args: [message, isError, duration],
+        args: [message, isError, duration, isSettingsMessage],
     }).catch(err => { 
         console.error("Failed to inject notification script:", err);
     });
 }
+
+// Handle messages from content scripts
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === 'openSettings') {
+        chrome.runtime.openOptionsPage();
+    }
+});
 
 // === KEYBOARD SHORTCUTS ===
 chrome.commands.onCommand.addListener(async (command) => {
@@ -1170,6 +1289,16 @@ chrome.commands.onCommand.addListener(async (command) => {
 
 async function executeShortcutRewrite(tab, mode) {
     try {
+        // Get settings first to check API key
+        const settings = await getSettings();
+        
+        // Validate API key first
+        if (!settings.geminiApiKey || settings.geminiApiKey.trim() === '') {
+            notifyUser(tab.id, "❌ No API key configured - Click to open settings", true, 6000);
+            showApiKeyNotification();
+            return;
+        }
+
         // Get selected text from page
         const results = await chrome.scripting.executeScript({
             target: { tabId: tab.id },
@@ -1204,8 +1333,6 @@ async function executeShortcutRewrite(tab, mode) {
             notifyUser(tab.id, "⚠️ Please select text in an editable field", true);
             return;
         }
-
-        const settings = await getSettings();
         
         if (result.selectedText.length > settings.maxTextLength) {
             notifyUser(tab.id, `⚠️ Text too long (max ${settings.maxTextLength} characters)`, true);
@@ -1253,5 +1380,12 @@ async function executeShortcutRewrite(tab, mode) {
         console.error(`Keyboard shortcut rewrite failed:`, error);
         const errorMsg = getUserFriendlyError(error);
         notifyUser(tab.id, `❌ ${errorMsg}`, true);
+        
+        // Show additional help for common errors
+        if (error.message && (error.message.includes('API key') || error.message.includes('401') || error.message.includes('403'))) {
+            setTimeout(() => {
+                showApiKeyNotification();
+            }, 2000);
+        }
     }
 }

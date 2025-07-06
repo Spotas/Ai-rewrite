@@ -183,6 +183,35 @@ Track your writing improvements:
 
 ---
 
+## 🚨 Enhanced Error Handling & User Notifications
+
+Version 2.1.1 introduces comprehensive error handling to keep you informed every step of the way:
+
+### 🔧 Automatic Error Detection
+- **API Key Validation**: Instant feedback on missing or invalid API keys
+- **Network Error Handling**: Clear messages for connection issues
+- **Rate Limit Detection**: Helpful notifications when API limits are reached
+- **Content Safety Filters**: Informative messages about blocked content
+
+### 📢 Smart Notification System
+- **Clickable Error Messages**: Click on API key errors to open settings directly
+- **System Notifications**: Native Chrome notifications for setup reminders
+- **Progressive Error Messages**: Context-aware help based on error type
+- **Auto-Recovery**: Intelligent retry logic for temporary issues
+
+### 🎯 Common Error Solutions
+
+| Error Type | What It Means | How to Fix |
+|------------|---------------|------------|
+| 🔑 **"No API key configured"** | Missing Gemini API key | Click notification to open settings |
+| 🚫 **"Invalid API key format"** | Incorrect key format | Check your key starts with "AIza" |
+| ⚡ **"Rate limit reached"** | Too many requests | Wait a few minutes before trying again |
+| 🌐 **"Network error"** | Connection issues | Check your internet connection |
+| 🛡️ **"Content blocked"** | Safety filters triggered | Try rephrasing your text |
+| ⏰ **"Request timeout"** | Server response delay | Try again with shorter text |
+
+---
+
 ## 🎯 Perfect For
 
 - **Content Creators** - Adapt tone for different audiences

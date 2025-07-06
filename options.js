@@ -204,7 +204,13 @@ async function saveGeneralSettings() {
     const apiKey = document.getElementById('apiKey').value.trim();
     
     if (!apiKey) {
-        showStatus('API Key cannot be empty', 'error');
+        showStatus('❌ API Key cannot be empty', 'error');
+        return;
+    }
+
+    // Validate API key format
+    if (!apiKey.startsWith('AIza') || apiKey.length < 35) {
+        showStatus('❌ Invalid API key format. Please check your Gemini API key.', 'error');
         return;
     }
 
@@ -220,12 +226,12 @@ async function saveGeneralSettings() {
     try {
         await saveSettings(settings);
         currentSettings = { ...currentSettings, ...settings };
-        showStatus('Settings saved successfully!', 'success');
+        showStatus('✅ Settings saved successfully!', 'success');
         
         // Update context menus
         updateContextMenusDebounced();
     } catch (error) {
-        showStatus(`Error saving settings: ${error.message}`, 'error');
+        showStatus(`❌ Error saving settings: ${error.message}`, 'error');
     }
 }
 
@@ -233,7 +239,13 @@ async function testApiConnection() {
     const apiKey = document.getElementById('apiKey').value.trim();
     
     if (!apiKey) {
-        showStatus('Please enter an API key first', 'error');
+        showStatus('❌ Please enter an API key first', 'error');
+        return;
+    }
+
+    // Validate API key format before testing
+    if (!apiKey.startsWith('AIza') || apiKey.length < 35) {
+        showStatus('❌ Invalid API key format. Please check your Gemini API key.', 'error');
         return;
     }
 
@@ -257,11 +269,33 @@ async function testApiConnection() {
         if (response.ok) {
             showStatus('✅ API connection successful!', 'success');
         } else {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+            const errorData = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
+            
+            let errorMessage = 'Connection failed';
+            if (response.status === 401 || response.status === 403) {
+                errorMessage = 'Invalid or expired API key';
+            } else if (response.status === 400) {
+                errorMessage = 'Invalid request format';
+            } else if (response.status === 429) {
+                errorMessage = 'Rate limit exceeded';
+            } else if (response.status >= 500) {
+                errorMessage = 'Server error - try again later';
+            } else {
+                errorMessage = errorData.error?.message || `HTTP ${response.status}`;
+            }
+            
+            throw new Error(errorMessage);
         }
     } catch (error) {
-        showStatus(`❌ Connection failed: ${error.message}`, 'error');
+        let errorMessage = error.message;
+        
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+            errorMessage = 'Network error - check your internet connection';
+        } else if (error.message.includes('API key')) {
+            errorMessage = 'Invalid API key - please check your key';
+        }
+        
+        showStatus(`❌ ${errorMessage}`, 'error');
     } finally {
         testButton.disabled = false;
         testButton.textContent = '🧪 Test API Key';
