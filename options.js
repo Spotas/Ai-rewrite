@@ -28,6 +28,24 @@ const BUILT_IN_MODES = {
 // Global state
 let currentSettings = {};
 let currentStats = {};
+let contextMenuUpdateTimeout = null;
+
+// Debounced context menu update function
+function updateContextMenusDebounced() {
+    if (contextMenuUpdateTimeout) {
+        clearTimeout(contextMenuUpdateTimeout);
+    }
+    
+    contextMenuUpdateTimeout = setTimeout(() => {
+        chrome.runtime.sendMessage({ action: 'updateContextMenus' }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error updating context menus:", chrome.runtime.lastError.message || chrome.runtime.lastError);
+            } else if (response && !response.success) {
+                console.error("Context menu update failed:", response.error || "Unknown error");
+            }
+        });
+    }, 500); // Wait 500ms before updating
+}
 
 // === INITIALIZATION ===
 document.addEventListener('DOMContentLoaded', async () => {
@@ -47,6 +65,13 @@ function setupTabs() {
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
             const targetTab = tab.dataset.tab;
+            const targetContent = document.getElementById(targetTab);
+
+            // Ensure target element exists before proceeding
+            if (!targetContent) {
+                console.error(`Tab content element with ID '${targetTab}' not found`);
+                return;
+            }
 
             // Remove active from all tabs and contents
             tabs.forEach(t => t.classList.remove('active'));
@@ -54,7 +79,7 @@ function setupTabs() {
 
             // Add active to clicked tab and corresponding content
             tab.classList.add('active');
-            document.getElementById(targetTab).classList.add('active');
+            targetContent.classList.add('active');
         });
     });
 }
@@ -137,6 +162,8 @@ function setupEventListeners() {
     // Modes tab
     document.getElementById('saveModes').addEventListener('click', saveModeSettings);
     document.getElementById('resetModes').addEventListener('click', resetModeSettings);
+    document.getElementById('selectAllModes').addEventListener('click', selectAllModes);
+    document.getElementById('deselectAllModes').addEventListener('click', deselectAllModes);
 
     // Custom modes tab
     document.getElementById('addCustomMode').addEventListener('click', addCustomMode);
@@ -196,7 +223,7 @@ async function saveGeneralSettings() {
         showStatus('Settings saved successfully!', 'success');
         
         // Update context menus
-        chrome.runtime.sendMessage({ action: 'updateContextMenus' });
+        updateContextMenusDebounced();
     } catch (error) {
         showStatus(`Error saving settings: ${error.message}`, 'error');
     }
@@ -253,25 +280,25 @@ function getApiEndpoint(model) {
 
 // === MODES MANAGEMENT ===
 function renderModesList() {
-    const container = document.getElementById('modesList');
-    container.innerHTML = '';
-
+    // Instead of dynamically creating the modes list, work with the existing checkboxes
     Object.entries(BUILT_IN_MODES).forEach(([key, name]) => {
-        const modeElement = document.createElement('div');
-        modeElement.className = 'mode-item';
-        modeElement.innerHTML = `
-            <label>
-                <input type="checkbox" value="${key}" ${currentSettings.enabledModes.includes(key) ? 'checked' : ''}>
-                ${name}
-            </label>
-        `;
-        container.appendChild(modeElement);
+        const checkbox = document.getElementById(`mode-${key}`);
+        if (checkbox) {
+            checkbox.checked = currentSettings.enabledModes.includes(key);
+        }
     });
 }
 
 async function saveModeSettings() {
-    const checkedModes = Array.from(document.querySelectorAll('#modesList input:checked'))
-        .map(cb => cb.value);
+    const checkedModes = [];
+    
+    // Check each built-in mode checkbox
+    Object.keys(BUILT_IN_MODES).forEach(key => {
+        const checkbox = document.getElementById(`mode-${key}`);
+        if (checkbox && checkbox.checked) {
+            checkedModes.push(key);
+        }
+    });
 
     if (checkedModes.length === 0) {
         showStatus('Please select at least one mode', 'error');
@@ -284,7 +311,7 @@ async function saveModeSettings() {
         showStatus('Mode settings saved!', 'success');
         
         // Update context menus
-        chrome.runtime.sendMessage({ action: 'updateContextMenus' });
+        updateContextMenusDebounced();
     } catch (error) {
         showStatus(`Error saving modes: ${error.message}`, 'error');
     }
@@ -294,6 +321,24 @@ function resetModeSettings() {
     currentSettings.enabledModes = Object.keys(BUILT_IN_MODES);
     renderModesList();
     showStatus('Mode settings reset to default', 'success');
+}
+
+function selectAllModes() {
+    Object.keys(BUILT_IN_MODES).forEach(key => {
+        const checkbox = document.getElementById(`mode-${key}`);
+        if (checkbox) {
+            checkbox.checked = true;
+        }
+    });
+}
+
+function deselectAllModes() {
+    Object.keys(BUILT_IN_MODES).forEach(key => {
+        const checkbox = document.getElementById(`mode-${key}`);
+        if (checkbox) {
+            checkbox.checked = false;
+        }
+    });
 }
 
 // === CUSTOM MODES ===
@@ -308,10 +353,18 @@ function renderCustomModes() {
             <h4>${mode.name}</h4>
             <p>${mode.prompt.substring(0, 100)}${mode.prompt.length > 100 ? '...' : ''}</p>
             <div class="button-group">
-                <button class="small secondary" onclick="editCustomMode('${key}')">✏️ Edit</button>
-                <button class="small danger" onclick="deleteCustomMode('${key}')">🗑️ Delete</button>
+                <button class="small secondary" data-action="edit" data-key="${key}">✏️ Edit</button>
+                <button class="small danger" data-action="delete" data-key="${key}">🗑️ Delete</button>
             </div>
         `;
+        
+        // Add event listeners for the buttons
+        const editButton = modeElement.querySelector('[data-action="edit"]');
+        const deleteButton = modeElement.querySelector('[data-action="delete"]');
+        
+        editButton.addEventListener('click', () => editCustomMode(key));
+        deleteButton.addEventListener('click', () => deleteCustomMode(key));
+        
         container.appendChild(modeElement);
     });
 }
@@ -345,13 +398,13 @@ async function addCustomMode() {
         showStatus('Custom mode added successfully!', 'success');
         
         // Update context menus
-        chrome.runtime.sendMessage({ action: 'updateContextMenus' });
+        updateContextMenusDebounced();
     } catch (error) {
         showStatus(`Error adding custom mode: ${error.message}`, 'error');
     }
 }
 
-window.editCustomMode = function(key) {
+function editCustomMode(key) {
     const mode = currentSettings.customModes[key];
     if (mode) {
         document.getElementById('customModeName').value = mode.name;
@@ -362,7 +415,7 @@ window.editCustomMode = function(key) {
         addButton.textContent = '✏️ Update Mode';
         addButton.onclick = () => updateCustomMode(key);
     }
-};
+}
 
 async function updateCustomMode(key) {
     const name = document.getElementById('customModeName').value.trim();
@@ -390,13 +443,13 @@ async function updateCustomMode(key) {
         showStatus('Custom mode updated successfully!', 'success');
         
         // Update context menus
-        chrome.runtime.sendMessage({ action: 'updateContextMenus' });
+        updateContextMenusDebounced();
     } catch (error) {
         showStatus(`Error updating custom mode: ${error.message}`, 'error');
     }
 }
 
-window.deleteCustomMode = async function(key) {
+async function deleteCustomMode(key) {
     if (!confirm('Are you sure you want to delete this custom mode?')) {
         return;
     }
@@ -409,11 +462,11 @@ window.deleteCustomMode = async function(key) {
         showStatus('Custom mode deleted', 'success');
         
         // Update context menus
-        chrome.runtime.sendMessage({ action: 'updateContextMenus' });
+        updateContextMenusDebounced();
     } catch (error) {
         showStatus(`Error deleting custom mode: ${error.message}`, 'error');
     }
-};
+}
 
 // === USAGE STATISTICS ===
 async function loadUsageStats() {
@@ -529,7 +582,7 @@ async function importSettings(event) {
         showStatus('Settings imported successfully!', 'success');
         
         // Update context menus
-        chrome.runtime.sendMessage({ action: 'updateContextMenus' });
+        updateContextMenusDebounced();
     } catch (error) {
         showStatus(`Import failed: ${error.message}`, 'error');
     } finally {
@@ -561,7 +614,7 @@ async function resetAllSettings() {
         showStatus('All settings reset to default', 'success');
         
         // Update context menus
-        chrome.runtime.sendMessage({ action: 'updateContextMenus' });
+        updateContextMenusDebounced();
     } catch (error) {
         showStatus(`Reset failed: ${error.message}`, 'error');
     }

@@ -1,36 +1,75 @@
-# ✨ AI Text Rewriter (Your Gemini-Powered Word Wizard) ✨
+# ✨ AI Text Rewriter Pro - Your Advanced Gemini-Powered Writing Assistant ✨
 
-**(Because sometimes your own words just... suck. 🤷‍♀️)**
+**(Transform your writing with AI precision and style! 🚀)**
 
-[![Version](https://img.shields.io/badge/Version-1.0ish-blue)](https://img.shields.io/badge/Version-1.0ish-blue) [![License](https://img.shields.io/badge/License-MIT-green)](https://img.shields.io/badge/License-MIT-green) [![Coffee](https://img.shields.io/badge/Made%20with%2054%20cup%20of-%20Chai%20☕-orange)](https://img.shields.io/badge/Buy%20Me%20A-Coffee-orange) <!-- Totally fake links, obvs -->
+[![Version](https://img.shields.io/badge/Version-2.0-blue)](https://img.shields.io/badge/Version-2.0-blue) [![License](https://img.shields.io/badge/License-MIT-green)](https://img.shields.io/badge/License-MIT-green) [![Coffee](https://img.shields.io/badge/Made%20with%20☕-Chai-orange)](https://img.shields.io/badge/Made%20with%20☕-Chai-orange)
 
-Ever stared at a sentence you wrote and thought, "Wow, I sound like a bored robot trying to order pizza"? 🤖🍕 Yeah, us too.
+**AI Text Rewriter Pro** is a comprehensive Chrome extension that transforms your writing using Google's powerful Gemini AI. Whether you need to sound more professional, creative, or just fix grammar, this extension has you covered with **17 built-in modes**, **custom prompts**, **undo functionality**, and much more!
 
-This Chrome extension is your secret weapon! It uses the mighty **Google Gemini AI** (the `gemini-2.0-flash-lite` model, specifically, 'cause we're fancy AND fast ⚡) to magically rewrite your text directly in input fields and text areas across the web.
+Ever stared at a sentence you wrote and thought, "Wow, I sound like a bored robot trying to order pizza"? 🤖🍕 This extension is your secret weapon! It uses the mighty **Google Gemini AI** (multiple models available, from `gemini-1.5-flash` to `gemini-2.0-flash-lite`) to magically rewrite your text directly in input fields and text areas across the web.
 
 Select some text, right-click, pick a vibe, and BAM! 💥 New words. Hopefully better words. Sometimes... *interesting* words. It's AI, folks, it's a wild ride! 🎢
+
+---
+
+## 🚀 What's New in Version 2.0! 🚀
+
+- 🎭 **17 Professional Writing Modes** - From humanize to technical precision
+- 🎨 **Custom Mode Creator** - Build your own rewriting styles
+- ↶ **Undo Functionality** - Instantly revert any rewrite
+- ⌨️ **Keyboard Shortcuts** - Lightning-fast rewriting with hotkeys
+- 📊 **Usage Analytics** - Track your writing improvements
+- 🌙 **Dark Mode** - Easy on the eyes, beautiful interface
+- 🔄 **Multiple AI Models** - Choose from latest Gemini models
+- 📤 **Settings Export/Import** - Backup and share your configurations
+- 🛡️ **Enhanced Error Handling** - Robust retry logic and user-friendly messages
+- 🎯 **Smart Text Validation** - Length limits and content filtering
 
 ---
 
 ## 🚀 Features (The Shiny Bits!) 🚀
 
 *   **🪄 Magic Wand Right-Click Action:** Select text in almost any editable field, right-click, and BOOM - rewrite options appear!
-*   **🎭 Tons of Tones (Because One Size Fits NONE):**
-    *   Make it sound more human (less robo-cop).
-    *   Just fix the darn typos and grammar blunders.
-    *   Sound like you actually own a suit (Professional).
-    *   Be super nice, even when you're seething (Polite).
-    *   Get a little sassy, maybe even *intentionally* mess up (Cheeky!).
-    *   Sound like you *just* learned what a keyboard is (Newby).
-    *   Tell the AI what to write from scratch (Composer)!
-*   **🧠 Powered by Google's Brainiac Gemini:** Leverages the `gemini-2.0-flash-lite` model via the Google AI API. It's smart... usually.
-*   **🔑 Secure-ish API Key Storage:** Uses `chrome.storage.sync` to save your precious Gemini API key (so you don't have to paste it every five seconds). Syncs across your Chrome browsers if you're logged in!
-*   **🎨 Snazzy Options Page:** A surprisingly modern-looking page to paste that API key you definitely didn't just Google how to get.
-*   **📢 Helpful (Annoying?) Popups:** Little notifications slide in to tell you what's happening, or more likely, what went wrong. They fade away... eventually.
+*   **🎭 17 Professional Writing Modes:** From humanize to technical precision, empathetic to persuasive - we've got every tone covered!
+*   **🎨 Custom Mode Creator:** Build your own rewriting styles with personalized prompts
+*   **↶ Undo Functionality:** Instantly revert any rewrite with a single click
+*   **⌨️ Keyboard Shortcuts:** Lightning-fast rewriting with customizable hotkeys
+*   **🧠 Powered by Google's Brainiac Gemini:** Multiple model options including `gemini-1.5-flash`, `gemini-1.5-pro`, and `gemini-2.0-flash-lite`
+*   **🔑 Secure API Key Storage:** Uses `chrome.storage.sync` to save your precious Gemini API key (syncs across your Chrome browsers!)
+*   **🎨 Modern Options Interface:** Dark mode support and intuitive settings management
+*   **📊 Usage Analytics:** Track your writing improvements and most-used modes
+*   **📢 Smart Notifications:** Helpful popups that tell you what's happening (and fade away gracefully)
+*   **🛡️ Enhanced Error Handling:** Robust retry logic and user-friendly error messages
 
 ---
 
-## 🛠️ Installation (Let's Get This Party Started!) 🛠️
+## 🎭 17 Built-in Writing Modes
+
+| Mode | Purpose | Perfect For |
+|------|---------|-------------|
+| 📝 **Humanize** | Make text sound natural and conversational | Robot-like content, stiff writing |
+| ✅ **Grammar Fix** | Correct spelling and grammar only | Quick proofreading, error correction |
+| 👔 **Professional** | Business-appropriate formal tone | Emails, reports, official documents |
+| 🙏 **Polite** | Courteous and respectful language | Customer service, delicate situations |
+| 😊 **Casual** | Friendly, informal conversation | Social media, casual emails |
+| 💪 **Confident** | Assertive and decisive language | Presentations, negotiations |
+| ❤️ **Empathetic** | Understanding and caring tone | Support messages, sensitive topics |
+| 🎯 **Persuasive** | Compelling and convincing | Sales copy, proposals, arguments |
+| ⚡ **Concise** | Clear and to-the-point | Headlines, summaries, tweets |
+| 📚 **Detailed** | Comprehensive and thorough | Explanations, tutorials, guides |
+| 🎨 **Creative** | Engaging and imaginative | Marketing copy, storytelling |
+| 🔬 **Technical** | Precise and specification-focused | Documentation, instructions |
+| 😏 **Cheeky** | Playful and slightly sarcastic | Social media, casual content |
+| 🎓 **Beginner-Friendly** | Simple and accessible language | Educational content, how-tos |
+| ✍️ **Composer** | Generate content from instructions | Create new text from prompts |
+| 🌍 **Translate** | Convert to English or improve clarity | International content, clarity |
+| 📄 **Summarize** | Extract key points concisely | Long documents, research |
+
+---
+
+## 🛠️ Installation & Quick Start Guide 🛠️
+
+### 📦 Installation (Let's Get This Party Started!)
 
 Alright, since this isn't (yet?) on the Chrome Web Store (because who has time for reviews? 🙄), you gotta load it manually like a true tech wizard (or someone who can follow instructions).
 
@@ -39,9 +78,31 @@ Alright, since this isn't (yet?) on the Chrome Web Store (because who has time f
 3.  **Flip the Super Secret Developer Switch 🕵️‍♀️:** Look for a toggle labeled "Developer mode" (usually in the top right corner). Click it. If it's on, you're basically a hacker now. Congrats.
 4.  **Shove the Folder at Chrome 욱:** Click the "Load unpacked" button that magically appeared. A file browser window will pop up.
 5.  **Point and Shoot 👉:** Navigate to and select that `ai-rewriter-extension` folder (the one *containing* the `manifest.json` file, not the zip file!). Click "Select Folder" or "Open".
-6.  **Bask in the Glory (or fix errors) 🙏:** If all went well, you should see the "AI Text Rewriter (Gemini)" extension card appear on the page! If you see angry red errors, you probably messed up step 5. Go back and try again, champ. 💪
+6.  **Bask in the Glory (or fix errors) 🙏:** If all went well, you should see the "AI Text Rewriter Pro" extension card appear on the page! If you see angry red errors, you probably messed up step 5. Go back and try again, champ. 💪
+7.  **Pin for Easy Access:** Click the puzzle piece icon in Chrome's toolbar and pin the AI Text Rewriter Pro extension for quick access.
 
-🎉 **Ta-da!** The extension icon (whatever placeholder icon we used) should appear in your Chrome toolbar (maybe hidden behind the puzzle piece icon 🧩).
+🎉 **Ta-da!** The extension icon should appear in your Chrome toolbar!
+
+### 🚀 Quick Start Guide
+
+#### 1. Initial Setup
+1. Click the extension icon or right-click → "Settings"
+2. Get your free API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+3. Paste your API key and test the connection
+4. Customize your settings (models, modes, shortcuts)
+5. Save and start rewriting!
+
+#### 2. Using the Extension
+**Right-Click Method:**
+1. Select text in any editable field
+2. Right-click on the selected text
+3. Choose "✨ Rewrite with AI" → pick your desired mode
+4. Watch the magic happen!
+
+**Keyboard Shortcuts:**
+- `Ctrl+Shift+H` - Humanize selected text
+- `Ctrl+Shift+P` - Professional tone
+- `Ctrl+Shift+Z` - Undo last rewrite
 
 ---
 
@@ -61,12 +122,12 @@ Okay, here's the *slightly* annoying part. This extension needs **YOUR** Google 
 
 **Plugging in the Power Cord 🔌**
 
-1.  Click the **AI Text Rewriter extension icon** 🧩 in your Chrome toolbar. This should open the fancy Options page we made.
-    *   *Alternatively:* Go back to `chrome://extensions`, find the AI Text Rewriter card, click "Details", then "Extension options". So many clicks!
+1.  Click the **AI Text Rewriter Pro extension icon** 🧩 in your Chrome toolbar. This should open the modern Options page.
+    *   *Alternatively:* Go back to `chrome://extensions`, find the AI Text Rewriter Pro card, click "Details", then "Extension options". So many clicks!
 2.  You'll see a field labeled "**Gemini API Key**". It's a password field, so you won't see the key as you paste (oooooh, security! ✨).
 3.  **PASTE** your copied API key into this box.
 4.  Click the glorious "**Save Key**" button. 💾
-5.  You *should* see a happy green message saying "API Key saved successfully!". ✅ If you see an angry red message, well... Houston, we have a problem. Houston, we have a problem. 🚀 (Did you paste the *whole* key?).
+5.  You *should* see a happy green message saying "API Key saved successfully!". ✅ If you see an angry red message, well... Houston, we have a problem. 🚀 (Did you paste the *whole* key?).
 
 **❗ IMPORTANT NOTE ABOUT YOUR KEY ❗**
 
@@ -84,60 +145,216 @@ Okay, installed? ✅ API key saved? ✅ Ready to rock? ✅ Let's rewrite!
 2.  **Type Your Soon-to-be-Glorious Words ⌨️:** Write something. Anything! Pour your heart out, or just type "the quick brown fox jumps over the lazy dog".
 3.  **Highlight the Chosen Ones ✨:** Select the text you want to transform using your mouse or keyboard.
 4.  **Invoke the Menu! Right-Click Pow! 🖱️💥:** Right-click directly *on the selected text*.
-5.  **Behold! The Menu! 🤩:** Hover over the "**Rewrite with AI**" option in the context menu that pops up.
-6.  **Pick Your Poison... Uh, Personality 🎭:** Choose one of the available modes from the sub-menu (Humanize, Professional, Cheeky, Composer, etc.).
-7.  **Patience, Grasshopper... 🌱:** A little notification might pop up saying it's working. The extension sends your text and the chosen mode off to the Gemini AI via the interwebs. This might take a second or two depending on the AI, the complexity, and whether your internet connection is powered by hamsters. 🐹
+5.  **Behold! The Menu! 🤩:** Hover over the "**✨ Rewrite with AI**" option in the context menu that pops up.
+6.  **Pick Your Mode 🎭:** Choose one of the 17 available modes from the sub-menu (Humanize, Professional, Creative, Technical, etc.).
+7.  **Patience, Grasshopper... 🌱:** A sleek notification will appear showing the progress. The extension sends your text and chosen mode to the selected Gemini AI model. Response time depends on text complexity and your selected AI model. 🐹
 8.  **Witness the Transformation! 🪄:** If the AI gods smile upon you, the selected text will be **replaced** with the rewritten version! 🎉
 
 ---
 
-## 🎭 Modes Explained (Choose Your Weapon Wisely) 🎭
+## ⚙️ Advanced Features
 
-*   **`Humanize (Make Natural)`:** Sound Less Like a Robot 🤖➡️🧑‍🎨
-    *   *Use when:* Your writing is stiff, overly formal, or just plain boring. Aims for a conversational, natural flow.
-*   **`Correct Grammar Only`:** Your Personal Grammar Nazi (but nicer?) 🧐
-    *   *Use when:* You just want spelling and grammar fixed without changing the meaning or tone much. It *tries* to only fix errors.
-*   **`Professional Tone`:** Put on Your Business Pants 👔
-    *   *Use when:* You need to sound formal, respectable, and like you know buzzwords. Good for work emails, reports (maybe?). *Tries* not to write the whole email for you unless the original text implied it.
-*   **`Polite Tone`:** For When You Need to Grovel (Nicely) 🙏
-    *   *Use when:* Your text sounds a bit harsh or demanding. This softens the language and adds courteous phrasing. Good for customer service replies or asking for favors.
-*   **`Cheeky (with Mistake)`:** Sassy Mode: ENGAGE! 😏 (Now with *Intentional* Oopsies!)
-    *   *Use when:* You want a playful, slightly sarcastic, or witty tone. As a bonus (?) it *tries* to sneak in **one** common grammatical error (your/you're, its/it's etc.) for extra authenticity? Or just chaos? 🤪
-*   **`Newby Tone`:** Sound Adorably Clueless 🥰
-    *   *Use when:* You want to sound like a beginner – maybe a bit simplistic, overly enthusiastic, or slightly awkward. Good for... roleplaying? Making complex topics sound simple? You tell me.
-*   **`Compose (from instruction)`:** Your Ghostwriter Genie 🧞
-    *   *Use when:* You don't want to *rewrite* existing text, but generate *new* text based on a short instruction.
-    *   *How:* Type your instruction (e.g., `write short email asking for project update`, `brainstorm blog post titles about cats`, `reply politely to this complaint`) into the text box, **select the instruction text**, right-click, and choose "Compose". The instruction will be replaced by the AI's generated content.
+### 🎨 Custom Modes
+Create your own rewriting styles:
+1. Go to Settings → Custom tab
+2. Enter a name and detailed prompt
+3. Save and use it like any built-in mode
+4. Export/import custom modes between devices
+
+### 📊 Usage Analytics
+Track your writing improvements:
+- Total rewrites performed
+- Characters processed
+- Most-used modes
+- Usage timeline
+
+### 🛡️ Smart Protection
+- **Rate Limiting**: Prevents API overuse
+- **Text Length Limits**: Configurable maximum text size
+- **Error Recovery**: Automatic retries with exponential backoff
+- **Safety Filters**: Content moderation built-in
+
+### 🔧 Advanced Settings
+- **Multiple AI Models**: Choose between Gemini 1.5 Flash, Pro, or 2.0
+- **Dark Mode**: Beautiful dark interface
+- **Keyboard Shortcuts**: Customizable hotkeys
+- **Undo History**: Keep track of recent changes
+- **Settings Backup**: Export/import all configurations
+
+---
+
+## 🎯 Perfect For
+
+- **Content Creators** - Adapt tone for different audiences
+- **Business Professionals** - Polish emails and documents
+- **Students** - Improve academic writing
+- **Customer Service** - Craft appropriate responses
+- **Social Media Managers** - Match brand voice
+- **Non-native Speakers** - Enhance English fluency
+- **Marketers** - Create compelling copy
+- **Technical Writers** - Clarify complex concepts
+
+---
+
+## 🎭 Detailed Mode Guide (Choose Your Weapon Wisely) 🎭
+
+### Core Writing Modes
+
+*   **📝 `Humanize`:** Make text sound natural and conversational 🤖➡️🧑‍🎨
+    *   *Perfect for:* Robot-like content, stiff writing, overly formal text that needs a conversational flow.
+
+*   **✅ `Grammar Fix`:** Your personal proofreader 🧐
+    *   *Perfect for:* Quick error correction without changing tone or meaning. Focuses purely on spelling and grammar.
+
+*   **👔 `Professional`:** Business-appropriate formal tone �
+    *   *Perfect for:* Work emails, reports, official documents, presentations, and corporate communication.
+
+*   **🙏 `Polite`:** Courteous and respectful language 
+    *   *Perfect for:* Customer service, delicate situations, requests, and when you need to sound diplomatic.
+
+### Personality & Tone Modes
+
+*   **😊 `Casual`:** Friendly, informal conversation 
+    *   *Perfect for:* Social media posts, casual emails, friendly messages, and relaxed communication.
+
+*   **💪 `Confident`:** Assertive and decisive language 
+    *   *Perfect for:* Presentations, negotiations, leadership communication, and when you need to sound authoritative.
+
+*   **❤️ `Empathetic`:** Understanding and caring tone 
+    *   *Perfect for:* Support messages, sensitive topics, consoling someone, and emotional communication.
+
+*   **😏 `Cheeky`:** Playful and slightly sarcastic 
+    *   *Perfect for:* Social media content, casual writing, humor, and when you want to add personality.
+
+### Content Optimization Modes
+
+*   **🎯 `Persuasive`:** Compelling and convincing language 
+    *   *Perfect for:* Sales copy, proposals, arguments, marketing content, and calls-to-action.
+
+*   **⚡ `Concise`:** Clear and to-the-point 
+    *   *Perfect for:* Headlines, summaries, tweets, bullet points, and when brevity matters.
+
+*   **📚 `Detailed`:** Comprehensive and thorough 
+    *   *Perfect for:* Explanations, tutorials, guides, documentation, and in-depth content.
+
+*   **🎨 `Creative`:** Engaging and imaginative 
+    *   *Perfect for:* Marketing copy, storytelling, creative writing, and content that needs flair.
+
+### Specialized Modes
+
+*   **🔬 `Technical`:** Precise and specification-focused 
+    *   *Perfect for:* Documentation, instructions, technical writing, and professional specifications.
+
+*   **🎓 `Beginner-Friendly`:** Simple and accessible language 
+    *   *Perfect for:* Educational content, how-to guides, explaining complex topics simply.
+
+*   **✍️ `Composer`:** Generate content from instructions 🧞
+    *   *Perfect for:* Creating new text from prompts. Type your instruction (e.g., "write email asking for project update"), select it, and choose Composer to generate fresh content.
+
+*   **🌍 `Translate`:** Convert to English or improve clarity 
+    *   *Perfect for:* International content, non-native English text, and improving readability.
+
+*   **📄 `Summarize`:** Extract key points concisely 
+    *   *Perfect for:* Long documents, research papers, articles, and when you need the main points.
 
 ---
 
 ## 🤔 Troubleshooting (When Things Go Sideways) 🤔
 
-Yeah, sometimes technology just says "NOPE". 🙅‍♂️ Here's a quick guide:
+Yeah, sometimes technology just says "NOPE". 🙅‍♂️ Here's a comprehensive guide:
 
-*   **😭 It's Not Working AT ALL!**
-    *   **API Key:** Did you *actually* save your API key correctly in the options? Is it the *right* key? Double-check!
-    *   **Reload Extension:** Go to `chrome://extensions` and click the little refresh icon 🔄 on the AI Rewriter card. Sometimes extensions get sleepy.
-    *   **Reload Page:** Try refreshing the webpage (F5) you're trying to use it on.
-    *   **Check Console (Background):** Go to `chrome://extensions`, find the AI Rewriter card, and click the "**Service worker**" link. Look for **RED ERROR MESSAGES** in the console window that pops up *after* you try to use the extension. Copy/paste these if you need help!
-    *   **Check Console (Page):** On the webpage where it's failing, right-click anywhere, select "Inspect", and go to the "Console" tab. Try using the extension again. Any **RED ERRORS** there?
+### Common Issues
 
-*   **🚫 Error: `Cannot access chrome:// URL`**
-    *   You're trying to use the extension on a Chrome settings page (like `chrome://extensions`). For security reasons, Chrome blocks extensions from messing with these pages. Use it on a regular `http://` or `https://` website.
+**😭 It's Not Working AT ALL!**
+*   **API Key:** Did you *actually* save your API key correctly in the options? Is it the *right* key? Double-check!
+*   **Reload Extension:** Go to `chrome://extensions` and click the little refresh icon 🔄 on the AI Text Rewriter Pro card. Sometimes extensions get sleepy.
+*   **Reload Page:** Try refreshing the webpage (F5) you're trying to use it on.
+*   **Check Console (Background):** Go to `chrome://extensions`, find the AI Text Rewriter Pro card, and click the "**Service worker**" link. Look for **RED ERROR MESSAGES** in the console window that pops up *after* you try to use the extension. Copy/paste these if you need help!
+*   **Check Console (Page):** On the webpage where it's failing, right-click anywhere, select "Inspect", and go to the "Console" tab. Try using the extension again. Any **RED ERRORS** there?
 
-*   **✨ Weird Output (Options, Asterisks `*`, Emails when you didn't ask?)**
-    *   The AI can be a bit... creative. We've tried to tell it *very sternly* in the prompts to JUST give the rewritten text and nothing else (no markdown like `*emphasis*`, no "Option 1:", etc.).
-    *   If you still get weird formatting or unexpected content (like a full email for "Professional Tone"), the AI might be ignoring instructions. We added some cleanup code, but it's not perfect. Prompt engineering is hard! 🤷‍♂️
+**"API Key not working"**
+- Verify key is correctly copied from Google AI Studio
+- Check if your Google account has API access enabled
+- Test connection in Settings → General → Test API Key
 
-*   **🚦 Error: `Content blocked by API...`**
-    *   The AI's safety filters might have flagged your original text or the requested rewrite (especially possible with "Cheeky"). Try rephrasing your original text or using a different mode.
+**🚫 Error: `Cannot access chrome:// URL`**
+*   You're trying to use the extension on a Chrome settings page (like `chrome://extensions`). For security reasons, Chrome blocks extensions from messing with these pages. Use it on a regular `http://` or `https://` website.
 
-*   **📉 API Errors (4xx/5xx Status)**
-    *   `400 Bad Request`: Often means the model name (`gemini-2.0-flash-lite`) is wrong or the request format is broken. (Shouldn't happen with this code, but maybe Google changed something?).
-    *   `401 Unauthorized` / `403 Forbidden`: Almost always an **API Key problem**. Is it correct? Is it enabled? Does your Google Cloud project have the API enabled?
-    *   `404 Not Found`: The API endpoint URL might be wrong.
-    *   `429 Too Many Requests`: You might be hitting rate limits on the free tier. Slow down!
-    *   `500 Internal Server Error`: Google's servers are having a hiccup. Try again later. ☕
+**"Cannot rewrite on this page"**
+- Extension only works on regular websites (http/https)
+- Won't work on Chrome internal pages (chrome://)
+- Ensure you're in an editable text field
+
+**"Text not replacing"**
+- Click in the text field before selecting text
+- Try refreshing the page and attempting again
+- Check browser console for detailed error messages
+
+**✨ Weird Output (Options, Asterisks `*`, Emails when you didn't ask?)**
+*   The AI can be a bit... creative. We've tried to tell it *very sternly* in the prompts to JUST give the rewritten text and nothing else (no markdown like `*emphasis*`, no "Option 1:", etc.).
+*   If you still get weird formatting or unexpected content (like a full email for "Professional Tone"), the AI might be ignoring instructions. We added some cleanup code, but it's not perfect. Prompt engineering is hard! 🤷‍♂️
+
+**🚦 Error: `Content blocked by API...`**
+*   The AI's safety filters might have flagged your original text or the requested rewrite (especially possible with "Cheeky"). Try rephrasing your original text or using a different mode.
+
+**"Too many requests"**
+- Built-in rate limiting prevents API overuse
+- Wait 60 seconds and try again
+- Consider upgrading your Google AI Studio plan for higher limits
+
+**📉 API Errors (4xx/5xx Status)**
+*   `400 Bad Request`: Often means the model name is wrong or the request format is broken. Try switching AI models in settings.
+*   `401 Unauthorized` / `403 Forbidden`: Almost always an **API Key problem**. Is it correct? Is it enabled? Does your Google Cloud project have the API enabled?
+*   `404 Not Found`: The API endpoint URL might be wrong.
+*   `429 Too Many Requests`: You might be hitting rate limits on the free tier. Slow down!
+*   `500 Internal Server Error`: Google's servers are having a hiccup. Try again later. ☕
+
+### Getting Help
+1. Check the browser console (F12) for detailed error messages
+2. Test your API connection in the settings
+3. Try different AI models if one isn't working
+4. Report issues with specific error messages
+
+---
+
+## 🔐 Privacy & Security
+
+- **Your API Key**: Stored locally in your browser, never shared
+- **Your Text**: Sent directly to Google's servers, not stored by us
+- **Usage Data**: Optional analytics stored locally only
+- **No External Tracking**: No third-party analytics or tracking
+- **Open Source**: Inspect the code to verify privacy practices
+
+---
+
+## 📈 Performance Tips
+
+1. **Choose the Right Model**:
+   - Gemini 1.5 Flash: Fastest, most cost-effective
+   - Gemini 1.5 Pro: More capable, better for complex tasks
+   - Gemini 2.0 Flash: Latest features, experimental
+
+2. **Optimize Text Length**:
+   - Keep selections under 2000 characters for best speed
+   - Break long documents into smaller sections
+   - Use concise mode for lengthy content
+
+3. **Use Custom Modes**:
+   - Create specific prompts for recurring tasks
+   - More targeted results than generic modes
+   - Save time with personalized workflows
+
+---
+
+## 🔮 Future Roadmap
+
+- 🌐 **Multi-language Support** - Rewrite in different languages
+- 🔊 **Voice Input** - Dictate text for rewriting
+- 📱 **Mobile Support** - Browser extension for mobile
+- 🤖 **AI Model Comparison** - Side-by-side results
+- 📝 **Template Library** - Pre-made prompts for common tasks
+- 🔗 **Integration APIs** - Connect with other writing tools
+- 📊 **Advanced Analytics** - Writing improvement insights
 
 ---
 
@@ -162,13 +379,33 @@ Basically, this means you can do almost whatever you want with this code (use it
 
 ---
 
-## 📝 Acknowledgments
+## 📝 Acknowledgments & Credits
 
+- **Google Gemini AI** - Powering the intelligence behind every rewrite
+- **Chrome Extension APIs** - Making seamless integration possible
+- **Open Source Community** - Inspiration and best practices
+- **Beta Testers** - Feedback that shaped this extension
 - Special thanks to the Google Gemini team for their amazing AI technology!
 - Thanks to the Chrome extension development community for all the resources and inspiration! 🙌
 - And a big shoutout to you, the user! Thanks for trying out this extension and making the internet a slightly more interesting place! 🌍✨
 
+---
+
+## 💝 Support the Project
+
+Enjoying AI Text Rewriter Pro? Here's how you can help:
+
+1. ⭐ **Star the repository** (if open source)
+2. 💬 **Share with friends** who write content
+3. 🐛 **Report bugs** to help improve the extension
+4. 💡 **Suggest features** for future versions
+5. ☕ **Buy me a chai** (because coffee is overrated!)
+
 --- 
 If you like this extension, consider buying me a coffee! ☕ (Just kidding, I don't drink coffee. But I appreciate the thought!)
+
+**Transform your writing today with AI Text Rewriter Pro!** ✨
+
+*Made with 💙 and lots of ☕ (actually 🫖 chai) by Supratim*
 
 **Happy Rewriting! May your words be ever in your favor!** ✨

@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "AI Text Rewriter Pro (Gemini)",
-    "version": "2.1",
-    "description": "Advanced AI-powered text rewriting with latest Gemini 2.0+ Flash models, custom modes, undo functionality, and comprehensive settings. Enhanced with grammar correction shortcut.",
+    "name": "AI Text Rewriter",
+    "version": "2.1.1",
+    "description": "Advanced AI-powered text rewriting with latest models, custom modes, undo functionality, and comprehensive settings.",
     "permissions": [
       "storage",      
       "contextMenus", 
@@ -31,25 +31,25 @@
         "suggested_key": {
           "default": "Ctrl+Shift+H"
         },
-        "description": "Rewrite selected text to be more human-like"
+        "description": "Rewrite selected text to be more human-like (Ctrl+Shift+H)"
       },
       "rewrite-professional": {
         "suggested_key": {
           "default": "Ctrl+Shift+P"
         },
-        "description": "Rewrite selected text in professional tone"
+        "description": "Rewrite selected text in professional tone (Ctrl+Shift+P)"
       },
       "rewrite-grammar": {
         "suggested_key": {
           "default": "Ctrl+Shift+G"
         },
-        "description": "Fix grammar and spelling in selected text"
+        "description": "Fix grammar and spelling in selected text (Ctrl+Shift+G)"
       },
       "undo-rewrite": {
         "suggested_key": {
           "default": "Ctrl+Shift+Z"
         },
-        "description": "Undo last rewrite"
+        "description": "Undo last rewrite (Ctrl+Shift+Z)"
       }
     },
     "content_security_policy": {

@@ -182,6 +182,8 @@ let burstRequestCount = 0;
 let lastBurstTime = 0;
 let responseCache = new Map();
 let activeRequests = new Set();
+let contextMenusSetup = false;
+let setupInProgress = false;
 
 // Performance monitoring
 let performanceMetrics = {
@@ -204,6 +206,16 @@ chrome.runtime.onInstalled.addListener(async () => {
     
     // Check API key and notify if needed
     await checkApiKeyStatus();
+});
+
+// === STARTUP HANDLER ===
+chrome.runtime.onStartup.addListener(async () => {
+    console.log("AI Rewriter Extension Starting Up");
+    
+    // Ensure context menus are set up on browser startup
+    if (!contextMenusSetup) {
+        await setupContextMenus();
+    }
 });
 
 async function initializeDefaultSettings() {
@@ -239,69 +251,141 @@ async function initializeDefaultSettings() {
 }
 
 async function setupContextMenus() {
-    return new Promise((resolve) => {
-        // Remove existing menus
+    // Prevent concurrent setup calls
+    if (setupInProgress) {
+        console.log("Context menu setup already in progress, skipping...");
+        return;
+    }
+
+    setupInProgress = true;
+    
+    return new Promise((resolve, reject) => {
+        // Remove existing menus first
         chrome.contextMenus.removeAll(() => {
+            if (chrome.runtime.lastError) {
+                console.error("Error removing context menus:", chrome.runtime.lastError);
+                setupInProgress = false;
+                reject(new Error(chrome.runtime.lastError.message));
+                return;
+            }
+            
             console.log("Removed old context menus.");
             
             // Get current settings
             chrome.storage.sync.get(['enabledModes', 'customModes'], (result) => {
-                const enabledModes = result.enabledModes || Object.keys(BUILT_IN_MODES);
-                const customModes = result.customModes || {};
+                if (chrome.runtime.lastError) {
+                    console.error("Error getting storage:", chrome.runtime.lastError);
+                    setupInProgress = false;
+                    reject(new Error(chrome.runtime.lastError.message));
+                    return;
+                }
                 
-                // Create parent menu
-                chrome.contextMenus.create({
-                    id: CONTEXT_MENU_ID,
-                    title: "✨ Rewrite with AI",
-                    contexts: ["editable"]
-                });
-                
-                // Add built-in modes
-                enabledModes.forEach(modeKey => {
-                    if (BUILT_IN_MODES[modeKey]) {
-                        chrome.contextMenus.create({
-                            id: `${CONTEXT_MENU_ID}_${modeKey}`,
-                            parentId: CONTEXT_MENU_ID,
-                            title: `📝 ${BUILT_IN_MODES[modeKey]}`,
-                            contexts: ["editable"]
-                        });
-                    }
-                });
-                
-                // Add custom modes
-                Object.entries(customModes).forEach(([key, mode]) => {
+                try {
+                    const enabledModes = result.enabledModes || Object.keys(BUILT_IN_MODES);
+                    const customModes = result.customModes || {};
+                    
+                    // Create parent menu
                     chrome.contextMenus.create({
-                        id: `${CONTEXT_MENU_ID}_custom_${key}`,
-                        parentId: CONTEXT_MENU_ID,
-                        title: `🎨 ${mode.name}`,
+                        id: CONTEXT_MENU_ID,
+                        title: "✨ Rewrite with AI",
                         contexts: ["editable"]
+                    }, () => {
+                        if (chrome.runtime.lastError) {
+                            console.error("Error creating parent menu:", chrome.runtime.lastError);
+                            setupInProgress = false;
+                            reject(new Error(chrome.runtime.lastError.message));
+                            return;
+                        }
+                        
+                        let menuItemsCreated = 0;
+                        let totalMenuItems = enabledModes.length + Object.keys(customModes).length + 3; // +3 for separator, undo, settings
+                        
+                        const checkComplete = () => {
+                            menuItemsCreated++;
+                            if (menuItemsCreated >= totalMenuItems) {
+                                contextMenusSetup = true;
+                                setupInProgress = false;
+                                console.log("Context menus created successfully.");
+                                resolve();
+                            }
+                        };
+                        
+                        // Add built-in modes
+                        enabledModes.forEach(modeKey => {
+                            if (BUILT_IN_MODES[modeKey]) {
+                                chrome.contextMenus.create({
+                                    id: `${CONTEXT_MENU_ID}_${modeKey}`,
+                                    parentId: CONTEXT_MENU_ID,
+                                    title: `${BUILT_IN_MODES[modeKey].icon} ${BUILT_IN_MODES[modeKey].name}`,
+                                    contexts: ["editable"]
+                                }, () => {
+                                    if (chrome.runtime.lastError) {
+                                        console.error(`Error creating menu for ${modeKey}:`, chrome.runtime.lastError);
+                                    }
+                                    checkComplete();
+                                });
+                            } else {
+                                checkComplete();
+                            }
+                        });
+                        
+                        // Add custom modes
+                        Object.entries(customModes).forEach(([key, mode]) => {
+                            chrome.contextMenus.create({
+                                id: `${CONTEXT_MENU_ID}_custom_${key}`,
+                                parentId: CONTEXT_MENU_ID,
+                                title: `🎨 ${mode.name}`,
+                                contexts: ["editable"]
+                            }, () => {
+                                if (chrome.runtime.lastError) {
+                                    console.error(`Error creating custom menu for ${key}:`, chrome.runtime.lastError);
+                                }
+                                checkComplete();
+                            });
+                        });
+                        
+                        // Add separator and utility options
+                        chrome.contextMenus.create({
+                            id: "separator1",
+                            parentId: CONTEXT_MENU_ID,
+                            type: "separator",
+                            contexts: ["editable"]
+                        }, () => {
+                            if (chrome.runtime.lastError) {
+                                console.error("Error creating separator:", chrome.runtime.lastError);
+                            }
+                            checkComplete();
+                        });
+                        
+                        chrome.contextMenus.create({
+                            id: `${CONTEXT_MENU_ID}_undo`,
+                            parentId: CONTEXT_MENU_ID,
+                            title: "↶ Undo Last Rewrite",
+                            contexts: ["editable"]
+                        }, () => {
+                            if (chrome.runtime.lastError) {
+                                console.error("Error creating undo menu:", chrome.runtime.lastError);
+                            }
+                            checkComplete();
+                        });
+                        
+                        chrome.contextMenus.create({
+                            id: `${CONTEXT_MENU_ID}_settings`,
+                            parentId: CONTEXT_MENU_ID,
+                            title: "⚙️ Settings",
+                            contexts: ["editable"]
+                        }, () => {
+                            if (chrome.runtime.lastError) {
+                                console.error("Error creating settings menu:", chrome.runtime.lastError);
+                            }
+                            checkComplete();
+                        });
                     });
-                });
-                
-                // Add separator and utility options
-                chrome.contextMenus.create({
-                    id: "separator1",
-                    parentId: CONTEXT_MENU_ID,
-                    type: "separator",
-                    contexts: ["editable"]
-                });
-                
-                chrome.contextMenus.create({
-                    id: `${CONTEXT_MENU_ID}_undo`,
-                    parentId: CONTEXT_MENU_ID,
-                    title: "↶ Undo Last Rewrite",
-                    contexts: ["editable"]
-                });
-                
-                chrome.contextMenus.create({
-                    id: `${CONTEXT_MENU_ID}_settings`,
-                    parentId: CONTEXT_MENU_ID,
-                    title: "⚙️ Settings",
-                    contexts: ["editable"]
-                });
-                
-                console.log("Context menus created.");
-                resolve();
+                } catch (error) {
+                    console.error("Error creating context menus:", error);
+                    setupInProgress = false;
+                    reject(error);
+                }
             });
         });
     });
@@ -321,6 +405,195 @@ async function checkApiKeyStatus() {
 }
 
 // === ENHANCED CONTEXT MENU HANDLER ===
+
+// Helper function to validate if a tab is valid for rewriting
+function isValidTab(tab) {
+    if (!tab || !tab.url) {
+        return false;
+    }
+    
+    // Check against restricted URLs
+    return !CONFIG.RESTRICTED_URLS.some(restrictedUrl => 
+        tab.url.startsWith(restrictedUrl)
+    );
+}
+
+// Helper function to parse mode information from menu item ID
+function parseModeFromMenuId(menuItemId) {
+    if (!menuItemId || !menuItemId.startsWith(CONTEXT_MENU_ID)) {
+        return null;
+    }
+    
+    // Remove the base context menu ID and underscore
+    const modeKey = menuItemId.replace(`${CONTEXT_MENU_ID}_`, '');
+    
+    // Check if it's a custom mode
+    if (modeKey.startsWith('custom_')) {
+        const customKey = modeKey.replace('custom_', '');
+        return { type: 'custom', key: customKey };
+    }
+    
+    // Check if it's a built-in mode
+    if (BUILT_IN_MODES[modeKey]) {
+        return { type: 'builtin', key: modeKey };
+    }
+    
+    return null;
+}
+
+// Helper function to get settings from storage
+async function getSettings() {
+    return new Promise((resolve) => {
+        chrome.storage.sync.get([
+            'geminiApiKey',
+            'selectedModel',
+            'customModes',
+            'enabledModes',
+            'maxTextLength',
+            'enableUndo',
+            'enableUsageTracking',
+            'enableKeyboardShortcuts'
+        ], (result) => {
+            resolve({
+                geminiApiKey: result.geminiApiKey || '',
+                selectedModel: result.selectedModel || CONFIG.DEFAULT_MODEL,
+                customModes: result.customModes || {},
+                enabledModes: result.enabledModes || Object.keys(BUILT_IN_MODES),
+                maxTextLength: result.maxTextLength || CONFIG.MAX_TEXT_LENGTH,
+                enableUndo: result.enableUndo !== false,
+                enableUsageTracking: result.enableUsageTracking !== false,
+                enableKeyboardShortcuts: result.enableKeyboardShortcuts !== false
+            });
+        });
+    });
+}
+
+// Helper function to get user-friendly error messages
+function getUserFriendlyError(error) {
+    if (!error) return "Unknown error occurred";
+    
+    const errorMsg = error.message || error.toString();
+    
+    if (errorMsg.includes('API key')) {
+        return "Please configure your Gemini API key in settings";
+    }
+    if (errorMsg.includes('quota') || errorMsg.includes('rate limit')) {
+        return "API rate limit reached. Please try again later";
+    }
+    if (errorMsg.includes('network') || errorMsg.includes('fetch')) {
+        return "Network error. Please check your connection";
+    }
+    if (errorMsg.includes('timeout')) {
+        return "Request timed out. Please try again";
+    }
+    if (errorMsg.includes('blocked')) {
+        return "Request blocked. Check your content filters";
+    }
+    
+    return "Something went wrong. Please try again";
+}
+
+// Helper function to track usage statistics
+async function trackUsage(mode, originalLength, rewrittenLength) {
+    try {
+        const stats = await new Promise((resolve) => {
+            chrome.storage.local.get(['usageStats'], (result) => {
+                resolve(result.usageStats || {
+                    totalRewrites: 0,
+                    modeUsage: {},
+                    charactersProcessed: 0,
+                    charactersGenerated: 0
+                });
+            });
+        });
+        
+        stats.totalRewrites++;
+        stats.modeUsage[mode] = (stats.modeUsage[mode] || 0) + 1;
+        stats.charactersProcessed += originalLength;
+        stats.charactersGenerated += rewrittenLength;
+        
+        chrome.storage.local.set({ usageStats: stats });
+    } catch (error) {
+        console.error("Error tracking usage:", error);
+    }
+}
+
+// Helper function to store text for undo functionality
+function storeForUndo(tabId, frameId, originalText) {
+    const undoData = {
+        tabId,
+        frameId,
+        originalText,
+        timestamp: Date.now()
+    };
+    
+    // Store in memory for quick access
+    rewriteHistory.unshift(undoData);
+    
+    // Keep only last 10 items
+    if (rewriteHistory.length > 10) {
+        rewriteHistory = rewriteHistory.slice(0, 10);
+    }
+}
+
+// Helper function to handle undo functionality
+async function handleUndo(tabId, frameId) {
+    const undoItem = rewriteHistory.find(item => 
+        item.tabId === tabId && item.frameId === (frameId || 0)
+    );
+    
+    if (!undoItem) {
+        notifyUser(tabId, "⚠️ No text to undo", true);
+        return;
+    }
+    
+    try {
+        await injectTextIntoPage(tabId, frameId || 0, undoItem.originalText);
+        
+        // Remove from history
+        const index = rewriteHistory.indexOf(undoItem);
+        if (index > -1) {
+            rewriteHistory.splice(index, 1);
+        }
+        
+        notifyUser(tabId, "↶ Text restored", false, 2000);
+    } catch (error) {
+        console.error("Undo failed:", error);
+        notifyUser(tabId, "❌ Undo failed", true);
+    }
+}
+
+// Helper function to check rate limiting
+function checkRateLimit() {
+    const now = Date.now();
+    
+    // Check burst rate limiting (max 5 requests in 10 seconds)
+    if (now - lastBurstTime > CONFIG.RATE_LIMIT.burstWindow) {
+        burstRequestCount = 0;
+        lastBurstTime = now;
+    }
+    
+    if (burstRequestCount >= CONFIG.RATE_LIMIT.burstLimit) {
+        return false;
+    }
+    
+    // Check overall rate limiting (max 60 requests per minute)
+    if (now - lastRequestTime > CONFIG.RATE_LIMIT.windowMs) {
+        requestCount = 0;
+        lastRequestTime = now;
+    }
+    
+    if (requestCount >= CONFIG.RATE_LIMIT.requests) {
+        return false;
+    }
+    
+    // Increment counters
+    requestCount++;
+    burstRequestCount++;
+    
+    return true;
+}
+
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     // Handle special actions
     if (info.menuItemId === `${CONTEXT_MENU_ID}_undo`) {
@@ -380,6 +653,47 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     // Perform rewrite
     await performRewrite(tab, info, modeInfo, settings);
 });
+
+async function performRewrite(tab, info, modeInfo, settings) {
+    try {
+        // Show progress notification
+        const modeName = modeInfo.type === 'builtin' 
+            ? BUILT_IN_MODES[modeInfo.key]?.name || modeInfo.key
+            : modeInfo.name || modeInfo.key;
+        
+        notifyUser(tab.id, `🤖 Rewriting (${modeName})...`, false, 2000);
+
+        // Store original text for undo
+        if (settings.enableUndo) {
+            storeForUndo(tab.id, info.frameId || 0, info.selectionText);
+        }
+
+        // Call API
+        const resultText = await callGeminiApiWithRetry(
+            settings.geminiApiKey,
+            info.selectionText,
+            modeInfo,
+            settings
+        );
+
+        if (resultText && resultText.trim()) {
+            await injectTextIntoPage(tab.id, info.frameId || 0, resultText);
+            
+            if (settings.enableUsageTracking) {
+                await trackUsage(modeInfo.key, info.selectionText.length, resultText.length);
+            }
+            
+            notifyUser(tab.id, "✅ Text rewritten successfully!", false, 2000);
+        } else {
+            throw new Error("Empty response from AI");
+        }
+
+    } catch (error) {
+        console.error(`Context menu rewrite failed:`, error);
+        const errorMsg = getUserFriendlyError(error);
+        notifyUser(tab.id, `❌ ${errorMsg}`, true);
+    }
+}
 
 // === ENHANCED API FUNCTIONS ===
 
@@ -563,29 +877,29 @@ async function generatePrompt(text, modeInfo, settings) {
 
 function getTemperatureForMode(mode) {
     const temperatures = {
-        grammar: 0.1,
-        professional: 0.2,
-        technical: 0.2,
-        academic: 0.2,
-        polite: 0.3,
-        translate: 0.3,
-        summarize: 0.3,
-        simplify: 0.3,
-        humanize: 0.4,
-        casual: 0.4,
-        confident: 0.4,
-        empathetic: 0.4,
-        persuasive: 0.5,
-        concise: 0.4,
-        detailed: 0.4,
-        expand: 0.5,
-        marketing: 0.6,
-        composer: 0.6,
-        creative: 0.8,
-        cheeky: 0.7,
-        newby: 0.6
+        grammar: 0.7,
+        professional: 0.8,
+        technical: 0.8,
+        academic: 0.8,
+        polite: 0.9,
+        translate: 0.9,
+        summarize: 0.9,
+        simplify: 0.9,
+        humanize: 1.0,
+        casual: 1.0,
+        confident: 1.0,
+        empathetic: 1.0,
+        persuasive: 1.1,
+        concise: 1.0,
+        detailed: 1.0,
+        expand: 1.1,
+        marketing: 1.2,
+        composer: 1.2,
+        creative: 1.4,
+        cheeky: 1.3,
+        newby: 1.2
     };
-    return temperatures[mode] || 0.4;
+    return temperatures[mode] || 1.2;
 }
 
 function postProcessResult(text, mode) {
@@ -632,8 +946,14 @@ function postProcessResult(text, mode) {
 // === MESSAGE HANDLING ===
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message.action === 'updateContextMenus') {
-        await setupContextMenus();
-        sendResponse({ success: true });
+        try {
+            await setupContextMenus();
+            sendResponse({ success: true });
+        } catch (error) {
+            console.error("Error updating context menus:", error);
+            sendResponse({ success: false, error: error.message });
+        }
+        return true; // Keep the message channel open for async response
     }
     
     if (message.action === 'getPerformanceMetrics') {
